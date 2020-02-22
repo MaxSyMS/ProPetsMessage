@@ -1,6 +1,7 @@
 package propets.message.convertor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,11 @@ public class MessageConvertor {
 				.itemsOnPage(paging.getPageSize())
 				.itemsTotal(list.size())
 				.build();
+	}
+
+	public ViewPostDto convertPostToViewPostDto(List<Post> favoritesList, Pageable paging) {
+		List<PostDto> posts = favoritesList.stream().map(post->convertToPostDto(post)).collect(Collectors.toList());
+		return convertToViewPostDto(posts, paging);
 	}
 
 }

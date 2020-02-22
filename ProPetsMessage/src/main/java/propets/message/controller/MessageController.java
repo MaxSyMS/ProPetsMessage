@@ -24,7 +24,7 @@ public class MessageController {
 	@Autowired
 	MessageService messageService;
 
-	@PostMapping("/{ownerId}")
+	@PostMapping("/owner/{ownerId}")
 	public PostDto createPost(@RequestBody NewPostDto newPostDto, @PathVariable String ownerId) {
 		return messageService.createPost(newPostDto, ownerId);
 	}
@@ -59,5 +59,9 @@ public class MessageController {
 		messageService.hidePost(id, user);
 	}
 	
+	@GetMapping("/favorites/{user}")
+	public ViewPostDto getUserFavorites(@PathVariable String user, @RequestParam int itemsOnPage, @RequestParam int currentPage) {
+		return messageService.getUserFavorites(itemsOnPage, currentPage, user);
+	}
 
 }

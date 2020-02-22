@@ -130,4 +130,17 @@ public class MessageServiceImpl implements MessageService {
 
 	}
 
+	@Override
+	public ViewPostDto getUserFavorites(int itemsOnPage, int currentPage, String user) {
+		List<String> testId = new ArrayList<>();
+//		testId.add("5e4a6e10703a0262ede3c527");
+		testId.add("5e4817e1461be550e9179ef8");
+		Pageable paging = PageRequest.of(currentPage, itemsOnPage);
+		Iterable<Post> favorites = messageRepository.findAllById(testId, paging);
+		List<Post> favoritesList = new ArrayList<>();
+		favorites.forEach(favoritesList::add);
+		return convertor.convertPostToViewPostDto(favoritesList, paging);
+//		return null;
+	}
+
 }

@@ -21,4 +21,6 @@ public interface MessageService {
 
 	void hidePost(String id, String user);
 
+	ViewPostDto getUserFavorites(int itemsOnPage, int currentPage, String user);
+
 }
