@@ -11,13 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import propets.message.convertor.MessageConvertor;
 import propets.message.dao.MessageRepository;
 import propets.message.domain.Post;
 import propets.message.dto.NewPostDto;
 import propets.message.dto.PostDto;
+import propets.message.dto.UserDto;
 import propets.message.dto.ViewPostDto;
 import propets.message.exseptions.PostNotFoundException;
 
@@ -29,6 +36,9 @@ public class MessageServiceImpl implements MessageService {
 	@Autowired
 	MessageConvertor convertor;
 
+	RestTemplate restTemplate = new RestTemplate();
+	HttpHeaders headers = new HttpHeaders();
+	
 	@Override
 	public PostDto createPost(NewPostDto newPostDto, String ownerId) {
 		Post post = Post.builder().ownerId(ownerId).postDate(LocalDateTime.now()).text(newPostDto.getText())
@@ -132,9 +142,12 @@ public class MessageServiceImpl implements MessageService {
 
 	@Override
 	public ViewPostDto getUserFavorites(int itemsOnPage, int currentPage, String user) {
-		List<String> testId = new ArrayList<>();
-		testId.add("5e4a6e10703a0262ede3c527");
-		testId.add("5e4817e1461be550e9179ef8");
+		String url = "https://propetsaccount.herokuapp.com/%7Blang%7D/account/v1/vasil/info";
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+		RequestEntity<String> requestEntity = new RequestEntity<>(HttpMethod.GET, builder.build().toUri());
+		ResponseEntity<UserDto> responseEntity = restTemplate.exchange(requestEntity, UserDto.class);
+
+		List<String> testId = responseEntity.getBody().getFavorites();
 		Pageable paging = PageRequest.of(currentPage, itemsOnPage);
 		Slice<Post> favorites = messageRepository.findByIdIn(testId, paging);
 		List<Post> favoritesList = favorites.getContent();
